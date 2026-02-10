@@ -1,18 +1,19 @@
 import express from 'express';
 import { config } from './config/env';
+import authRoutes from './routes/authRoutes';
+import { errorHandler } from './middlewares/errorHandler';
 
 const app = express();
 
-// Middlewares básicos
+// Middlewares globais
 app.use(express.json());
 
-// Rota de teste
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Server is running' });
-});
+// Rotas
+app.use('/api/auth', authRoutes);
+
+app.use(errorHandler);
 
 // Iniciar servidor
 app.listen(config.port, () => {
-  console.log(`🚀 Server running on port ${config.port}`);
-  console.log(`📝 Environment: ${config.nodeEnv}`);
+  console.log(`Server running on port ${config.port}`);
 });

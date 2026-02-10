@@ -21,8 +21,10 @@
   },
   "homepage": "https://github.com/gafreire/couple-challenge-api#readme",
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/dotenv": "^6.1.1",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/knex": "^0.15.2",
     "@types/node": "^25.0.10",
     "@types/pg": "^8.16.0",
@@ -31,8 +33,10 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "knex": "^3.1.0",
     "pg": "^8.17.2"
   }
