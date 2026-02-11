@@ -1,9 +1,10 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { authService } from '../services/auth.service';
 import { UnauthorizedError } from '../errors/AppError';
+import { AuthRequest } from '../types/express-extensions';
 
 export const authMiddleware = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ) => {
