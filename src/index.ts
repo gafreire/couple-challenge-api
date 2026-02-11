@@ -2,6 +2,7 @@ import express from 'express';
 import { config } from './config/env';
 import authRoutes from './routes/authRoutes';
 import { errorHandler } from './middlewares/errorHandler';
+import userRoutes from './routes/userRoutes';
 
 const app = express();
 
@@ -10,6 +11,7 @@ app.use(express.json());
 
 // Rotas
 app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
 
 app.use(errorHandler);
 
