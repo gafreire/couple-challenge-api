@@ -99,4 +99,19 @@ export const userRepository = {
 
     return result.rows;
   },
+  async updateCoupleId(
+    userId: string,
+    coupleId: string | null,
+  ): Promise<User | null> {
+    const result = await db.raw(
+      `
+      UPDATE users
+      SET couple_id = ?, updated_at = NOW()
+      WHERE id = ?
+      RETURNING *
+    `,
+      [coupleId, userId],
+    );
+    return result.rows[0] || null;
+  },
 };

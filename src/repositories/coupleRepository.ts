@@ -246,4 +246,26 @@ export const coupleRepository = {
 
     return result.rows;
   },
+  async cancelAllPendingInvitesExcept(
+    userId: string,
+    emails: string[],
+    exceptCoupleId: string,
+  ): Promise<void> {
+    const emailPlaceholders = emails.map(() => "?").join(", ");
+
+    await db.raw(
+      `
+      UPDATE couples
+      SET status = 'cancelled', updated_at = NOW()
+      WHERE (
+        user_id_1 = ? 
+        OR user_id_2 = ? 
+        OR invited_email IN (${emailPlaceholders})
+      )
+      AND status = 'pending'
+      AND id != ?
+    `,
+      [userId, userId, ...emails, exceptCoupleId],
+    );
+  },
 };
