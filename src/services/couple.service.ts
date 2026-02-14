@@ -120,4 +120,19 @@ export const coupleService = {
 
     return await coupleRepository.getCoupleWithUsers(coupleId);
   },
+  declineInvite: async (userId: string, coupleId: string) => {
+  const couple = await coupleRepository.findById(coupleId);
+
+  if (!couple) throw new NotFoundError("Couple not found");
+  if (couple.status !== "pending") throw new BadRequestError("Only pending invites can be declined");
+  if (!couple.invited_email) throw new BadRequestError("Invalid invitation data");
+
+  const userAuthProviders = await userAuthProviderRepository.findByUserId(userId);
+  const userEmails = userAuthProviders.map(p => p.email);
+  
+  if (!userEmails.includes(couple.invited_email)) throw new BadRequestError("This invite is not for you");
+  
+  await coupleRepository.updateStatus(coupleId, "cancelled");
+  
+}
 };
