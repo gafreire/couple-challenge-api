@@ -6,6 +6,7 @@ import {
   ConflictError,
   NotFoundError,
 } from "../errors/AppError";
+import { userRepository } from "../repositories/userRepository";
 
 export const coupleService = {
   // Criar casal (enviar convite)
@@ -53,19 +54,70 @@ export const coupleService = {
     await coupleRepository.updateStatus(coupleId, "cancelled");
   },
   listPendingInvites: async (userId: string) => {
-  const userAuthProviders = await userAuthProviderRepository.findByUserId(userId);
-  
-  if (userAuthProviders.length === 0) {
-    throw new AppError("User has no email registered", 500);
-  }
+    const userAuthProviders =
+      await userAuthProviderRepository.findByUserId(userId);
 
-  const emails = userAuthProviders.map((p) => p.email);
-  
-  const pendingInvites = await coupleRepository.findPendingInvitesByEmail(emails);
-  
-  return pendingInvites;
-},
+    if (userAuthProviders.length === 0) {
+      throw new AppError("User has no email registered", 500);
+    }
+
+    const emails = userAuthProviders.map((p) => p.email);
+
+    const pendingInvites =
+      await coupleRepository.findPendingInvitesByEmail(emails);
+
+    return pendingInvites;
+  },
   listAllCouples: async () => {
     return await coupleRepository.findAll();
+  },
+  acceptInvite: async (userId: string, coupleId: string) => {
+    const couple = await coupleRepository.findById(coupleId);
+    if (!couple) throw new NotFoundError("Couple not found");
+    if (couple.status !== "pending")
+      throw new BadRequestError("Only pending invites can be accepted");
+    if (!couple.invited_email)
+      throw new BadRequestError("Invalid invitation data");
+
+    const userAuthProviders =
+      await userAuthProviderRepository.findByUserId(userId);
+    const userEmails = userAuthProviders.map((p) => p.email);
+
+    if (!userEmails.includes(couple.invited_email))
+      throw new BadRequestError("This invite is not for you");
+    if (await coupleRepository.userHasCouple(userId))
+      throw new ConflictError(
+        "You already have a couple or pending invitation",
+      );
+
+    // Aceitar convite
+    await coupleRepository.acceptInvite(coupleId, userId);
+
+    // Atualizar couple_id de ambos EM PARALELO
+    await Promise.all([
+      userRepository.updateCoupleId(userId, coupleId),
+      userRepository.updateCoupleId(couple.user_id_1, coupleId),
+    ]);
+
+    // Buscar emails do user_id_1 E cancelar convites de ambos EM PARALELO
+    const user1AuthProviders = await userAuthProviderRepository.findByUserId(
+      couple.user_id_1,
+    );
+    const user1Emails = user1AuthProviders.map((p) => p.email);
+
+    await Promise.all([
+      coupleRepository.cancelAllPendingInvitesExcept(
+        userId,
+        userEmails,
+        coupleId,
+      ),
+      coupleRepository.cancelAllPendingInvitesExcept(
+        couple.user_id_1,
+        user1Emails,
+        coupleId,
+      ),
+    ]);
+
+    return await coupleRepository.getCoupleWithUsers(coupleId);
   },
 };

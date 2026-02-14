@@ -8,9 +8,11 @@ const router = Router();
 router.use(authMiddleware);
 
 router.post('/', coupleController.createCouple);
-router.delete('/:coupleId', coupleController.cancelInvite); 
 router.get('/invites', coupleController.listPendingInvites);
 router.get('/all', coupleController.listAllCouples);
+router.put('/:coupleId/accept', coupleController.acceptInvite);
+router.delete('/:coupleId', coupleController.cancelInvite); 
+
 
 
 
