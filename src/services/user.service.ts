@@ -12,7 +12,10 @@ export const userService = {
   },
 
   // Atualizar perfil
-  updateProfile: async ( userId: string, data: { name?: string; profile_picture?: string }) => {
+  updateProfile: async (
+    userId: string,
+    data: { name?: string; profile_picture?: string },
+  ) => {
     const updatedUser = await userRepository.update(userId, data);
 
     if (!updatedUser) {
@@ -20,5 +23,8 @@ export const userService = {
     }
 
     return updatedUser;
+  },
+  getAllUsers: async () => {
+    return await userRepository.findAll();
   },
 };
