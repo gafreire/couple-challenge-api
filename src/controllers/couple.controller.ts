@@ -80,5 +80,13 @@ export const coupleController = {
       res.status(200).json({ message: "Invite declined successfully" });
     } catch (error) {
       next(error);
+    }},
+  getMyCouple: async (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+      if (!req.user) throw new UnauthorizedError("User not authenticated");
+      const couple = await coupleService.getMyCouple(req.user.userId);
+      res.status(200).json(couple);
+    } catch (error) {
+      next(error);
     }}
 };

@@ -134,5 +134,12 @@ export const coupleService = {
   
   await coupleRepository.updateStatus(coupleId, "cancelled");
   
-}
+},
+  getMyCouple: async (userId: string) => {
+    const couple = await coupleRepository.findByUserId(userId);
+    if (!couple) throw new NotFoundError("You don't have a couple");
+    if(couple.status !== "active") throw new BadRequestError("You don't have a couple");
+    const coupleWithUsers = await coupleRepository.getCoupleWithUsers(couple.id);
+    return coupleWithUsers;
+  }
 };
