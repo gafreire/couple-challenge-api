@@ -121,25 +121,48 @@ export const coupleService = {
     return await coupleRepository.getCoupleWithUsers(coupleId);
   },
   declineInvite: async (userId: string, coupleId: string) => {
-  const couple = await coupleRepository.findById(coupleId);
+    const couple = await coupleRepository.findById(coupleId);
 
-  if (!couple) throw new NotFoundError("Couple not found");
-  if (couple.status !== "pending") throw new BadRequestError("Only pending invites can be declined");
-  if (!couple.invited_email) throw new BadRequestError("Invalid invitation data");
+    if (!couple) throw new NotFoundError("Couple not found");
+    if (couple.status !== "pending")
+      throw new BadRequestError("Only pending invites can be declined");
+    if (!couple.invited_email)
+      throw new BadRequestError("Invalid invitation data");
 
-  const userAuthProviders = await userAuthProviderRepository.findByUserId(userId);
-  const userEmails = userAuthProviders.map(p => p.email);
-  
-  if (!userEmails.includes(couple.invited_email)) throw new BadRequestError("This invite is not for you");
-  
-  await coupleRepository.updateStatus(coupleId, "cancelled");
-  
-},
+    const userAuthProviders =
+      await userAuthProviderRepository.findByUserId(userId);
+    const userEmails = userAuthProviders.map((p) => p.email);
+
+    if (!userEmails.includes(couple.invited_email))
+      throw new BadRequestError("This invite is not for you");
+
+    await coupleRepository.updateStatus(coupleId, "cancelled");
+  },
   getMyCouple: async (userId: string) => {
     const couple = await coupleRepository.findByUserId(userId);
     if (!couple) throw new NotFoundError("You don't have a couple");
-    if(couple.status !== "active") throw new BadRequestError("You don't have a couple");
-    const coupleWithUsers = await coupleRepository.getCoupleWithUsers(couple.id);
+    if (couple.status !== "active")
+      throw new BadRequestError("You don't have a couple");
+    const coupleWithUsers = await coupleRepository.getCoupleWithUsers(
+      couple.id,
+    );
     return coupleWithUsers;
-  }
+  },
+  leaveCouple: async (userId: string) => {
+    const couple = await coupleRepository.findByUserId(userId);
+    if (!couple) throw new NotFoundError("You don't have a couple");
+    if (couple.status !== "active")
+      throw new BadRequestError("You don't have an active couple");
+
+    const updates = [
+      userRepository.updateCoupleId(couple.user_id_1, null),
+      coupleRepository.updateStatus(couple.id, "inactive"),
+    ];
+
+    if (couple.user_id_2) {
+      updates.push(userRepository.updateCoupleId(couple.user_id_2, null));
+    }
+
+    await Promise.all(updates);
+  },
 };
