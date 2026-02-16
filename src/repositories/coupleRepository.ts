@@ -27,10 +27,17 @@ export const coupleRepository = {
   async findByUserId(userId: string): Promise<Couple | null> {
     const result = await db.raw(
       `
-      SELECT * FROM couples
-      WHERE user_id_1 = ? OR user_id_2 = ?
-      LIMIT 1
-    `,
+    SELECT * FROM couples
+    WHERE user_id_1 = ? OR user_id_2 = ?
+    ORDER BY 
+      CASE status
+        WHEN 'active' THEN 1
+        WHEN 'pending' THEN 2
+        ELSE 3
+      END,
+      created_at DESC
+    LIMIT 1
+  `,
       [userId, userId],
     );
 
