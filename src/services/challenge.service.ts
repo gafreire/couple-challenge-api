@@ -16,5 +16,12 @@ export const challengeService = {
 
         const challenge = await challengeRepository.create({ couple_id: couple.id, name: data.name, start_date: data.start_date, end_date: data.end_date, period_type: data.period_type })
         return challenge;
+    },
+    async listChallenges(userId: string) {
+        const couple = await coupleRepository.findByUserId(userId)
+        if(!couple) throw new NotFoundError("You don't have a couple");
+        if(couple.status !== "active") throw new BadRequestError("You don't have an active couple");
+        const challenges = await challengeRepository.findByCoupleId(couple.id);
+        return challenges;
     }
 }

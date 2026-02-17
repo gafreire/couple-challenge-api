@@ -21,5 +21,14 @@ export const challengeController = {
         } catch (error) {
             next(error);
         }
+    },
+    listChallenges: async (req: AuthRequest, res: Response, next: NextFunction) => {
+        try {
+        if (!req.user) throw new UnauthorizedError("User not authenticated");
+        const challenges = await challengeService.listChallenges(req.user.userId);
+        res.status(200).json(challenges);
+        } catch (error) {
+        next(error);
+        }
     }
 }

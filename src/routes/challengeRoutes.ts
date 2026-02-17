@@ -8,5 +8,6 @@ const router = Router();
 router.use(authMiddleware);
 
 router.post('/', challengeController.createChallenge);
+router.get('/', challengeController.listChallenges);
 
 export default router;
