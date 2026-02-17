@@ -23,5 +23,13 @@ export const challengeService = {
         if(couple.status !== "active") throw new BadRequestError("You don't have an active couple");
         const challenges = await challengeRepository.findByCoupleId(couple.id);
         return challenges;
+    },
+    async getActiveChallenge(userId: string) {
+        const couple = await coupleRepository.findByUserId(userId)
+        if(!couple) throw new NotFoundError("You don't have a couple");
+        if(couple.status !== "active") throw new BadRequestError("You don't have an active couple");
+        const activeChallenge = await challengeRepository.findActiveByCouple(couple.id);
+        if(!activeChallenge) throw new NotFoundError("You don't have an active challenge");
+        return activeChallenge;
     }
 }

@@ -30,5 +30,14 @@ export const challengeController = {
         } catch (error) {
         next(error);
         }
+    },
+    getActiveChallenge: async (req: AuthRequest, res: Response, next: NextFunction) => {
+        try {
+        if (!req.user) throw new UnauthorizedError("User not authenticated");
+        const activeChallenge = await challengeService.getActiveChallenge(req.user.userId);
+        res.status(200).json(activeChallenge);
+        } catch (error) {
+        next(error);
+        }
     }
 }
