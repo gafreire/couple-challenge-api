@@ -118,7 +118,7 @@ export const challengeRepository = {
   },
   async completeChallenge(
     id: string,
-    winnerId: string,
+    winnerId: string | null,
     winnerScore: number,
     loserScore: number
   ): Promise<Challenge | null> {
