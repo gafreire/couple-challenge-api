@@ -4,6 +4,7 @@ import authRoutes from './routes/authRoutes';
 import { errorHandler } from './middlewares/errorHandler';
 import userRoutes from './routes/userRoutes';
 import coupleRoutes from './routes/coupleRoutes';
+import challengeRoutes from './routes/challengeRoutes';
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/couples', coupleRoutes);
+app.use('/api/challenges', challengeRoutes);
 
 app.use(errorHandler);
 
