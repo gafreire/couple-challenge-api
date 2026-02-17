@@ -10,6 +10,7 @@ router.use(authMiddleware);
 router.post('/', challengeController.createChallenge);
 router.get('/active', challengeController.getActiveChallenge);
 router.get('/', challengeController.listChallenges);
+router.get('/:challengeId/tasks', challengeController.listTasks);
 router.put('/:challengeId/finish', challengeController.finishChallenge);
 
 export default router;

@@ -2,6 +2,7 @@ import { NextFunction, Response } from "express";
 import { challengeService } from "../services/challenge.service";
 import { AuthRequest } from "../types/express-extensions";
 import { UnauthorizedError } from "../errors/AppError";
+import { taskService } from "../services/task.service";
 
 export const challengeController = {
   createChallenge: async (
@@ -74,4 +75,17 @@ export const challengeController = {
       next(error);
     }
   },
+  listTasks: async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    if (!req.user) throw new UnauthorizedError("User not authenticated");
+    
+    const { challengeId } = req.params;
+    
+    const tasks = await taskService.listTasks(req.user.userId, challengeId as string);
+    
+    res.status(200).json(tasks);
+  } catch (error) {
+    next(error);
+  }
+}
 };
