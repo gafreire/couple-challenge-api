@@ -7,10 +7,16 @@ import coupleRoutes from './routes/coupleRoutes';
 import challengeRoutes from './routes/challengeRoutes';
 import taskRoutes from './routes/taskRoutes';
 import taskCompletionRoutes from './routes/taskCompletionRoutes';
+import cors from 'cors';
+
 
 const app = express();
 
 // Middlewares globais
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+}));
+app.use(express.json());
 app.use(express.json());
 
 // Rotas
