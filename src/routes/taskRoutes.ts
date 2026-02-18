@@ -8,6 +8,7 @@ router.use(authMiddleware);
 
 router.post('/', taskController.createTask);
 router.put('/:taskId', taskController.updateTask);
+router.delete('/:taskId', taskController.deleteTask);
 
 export default router;
 

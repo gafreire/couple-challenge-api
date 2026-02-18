@@ -73,5 +73,18 @@ export const taskService = {
       throw new BadRequestError("Max completions must be greater than zero");
     const updatedTask = await taskRepository.update(taskId, data);
     return updatedTask;
+  },
+  async deleteTask(userId: string, taskId: string) {
+    const task = await taskRepository.findById(taskId)
+    if(!task) throw new NotFoundError("Task not found");
+    const [challenge, couple] = await Promise.all([
+      challengeRepository.findById(task.challenge_id),
+      coupleRepository.findByUserId(userId),
+    ]);
+    if(!challenge) throw new NotFoundError("Challenge not found");
+    if (!couple) throw new NotFoundError("You don't have a couple");
+    if(challenge.couple_id !== couple.id) throw new BadRequestError("This task doesn't belong to your couple");
+    if(challenge.status !== "active") throw new BadRequestError("Only tasks from active challenges can be deleted");
+    await taskRepository.delete(taskId);
   }
 };

@@ -25,15 +25,29 @@ export const taskController = {
   updateTask: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       if (!req.user) throw new UnauthorizedError("User not authenticated");
-        const { taskId } = req.params;
-        const { name, description, points, max_completions } = req.body;
-        const updatedTask = await taskService.updateTask(req.user.userId, taskId as string, {
+      const { taskId } = req.params;
+      const { name, description, points, max_completions } = req.body;
+      const updatedTask = await taskService.updateTask(
+        req.user.userId,
+        taskId as string,
+        {
           name,
           description,
           points,
           max_completions,
-        });
-        res.status(200).json(updatedTask);
+        },
+      );
+      res.status(200).json(updatedTask);
+    } catch (error) {
+      next(error);
+    }
+  },
+  deleteTask: async (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+      if (!req.user) throw new UnauthorizedError("User not authenticated");
+      const { taskId } = req.params;
+      await taskService.deleteTask(req.user.userId, taskId as string);
+      res.status(204).send()
     } catch (error) {
       next(error);
     }
