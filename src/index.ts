@@ -6,6 +6,7 @@ import userRoutes from './routes/userRoutes';
 import coupleRoutes from './routes/coupleRoutes';
 import challengeRoutes from './routes/challengeRoutes';
 import taskRoutes from './routes/taskRoutes';
+import taskCompletionRoutes from './routes/taskCompletionRoutes';
 
 const app = express();
 
@@ -18,6 +19,8 @@ app.use('/api/user', userRoutes);
 app.use('/api/couples', coupleRoutes);
 app.use('/api/challenges', challengeRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use('/api/task-completions', taskCompletionRoutes);  // ← Adiciona (depois de taskRoutes)
+
 
 app.use(errorHandler);
 
