@@ -65,22 +65,30 @@ export const coupleController = {
   acceptInvite: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       if (!req.user) throw new UnauthorizedError("User not authenticated");
-      const { coupleId }= req.params
-      const couple = await coupleService.acceptInvite(req.user.userId, coupleId as string);
-      res.status(200).json(couple)
+      const { coupleId } = req.params;
+      const couple = await coupleService.acceptInvite(
+        req.user.userId,
+        coupleId as string,
+      );
+      res.status(200).json(couple);
     } catch (error) {
       next(error);
     }
   },
-  declineInvite: async (req: AuthRequest, res: Response, next: NextFunction) => {
+  declineInvite: async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       if (!req.user) throw new UnauthorizedError("User not authenticated");
-      const { coupleId }= req.params
+      const { coupleId } = req.params;
       await coupleService.declineInvite(req.user.userId, coupleId as string);
       res.status(200).json({ message: "Invite declined successfully" });
     } catch (error) {
       next(error);
-    }},
+    }
+  },
   getMyCouple: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       if (!req.user) throw new UnauthorizedError("User not authenticated");
@@ -88,13 +96,30 @@ export const coupleController = {
       res.status(200).json(couple);
     } catch (error) {
       next(error);
-    }},
+    }
+  },
   leaveCouple: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       if (!req.user) throw new UnauthorizedError("User not authenticated");
       await coupleService.leaveCouple(req.user.userId);
-      res.status(200).json({ message: "You have left the couple successfully" });
+      res
+        .status(200)
+        .json({ message: "You have left the couple successfully" });
     } catch (error) {
       next(error);
-    }}
+    }
+  },
+  getMyPendingCouple: async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      if (!req.user) throw new UnauthorizedError("User not authenticated");
+      const couple = await coupleService.getMyPendingCouple(req.user.userId);
+      res.status(200).json(couple);
+    } catch (error) {
+      next(error);
+    }
+  },
 };

@@ -275,4 +275,17 @@ export const coupleRepository = {
       [userId, userId, ...emails, exceptCoupleId],
     );
   },
+  async findPendingByUserId(userId: string): Promise<Couple | null> {
+    const result = await db.raw(
+      `
+    SELECT * FROM couples
+    WHERE user_id_1 = ?
+    AND status = 'pending'
+    LIMIT 1
+  `,
+      [userId],
+    );
+
+    return result.rows[0] || null;
+  },
 };

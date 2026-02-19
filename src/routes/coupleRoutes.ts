@@ -12,11 +12,9 @@ router.get('/invites', coupleController.listPendingInvites);
 router.get('/all', coupleController.listAllCouples);
 router.get('/me', coupleController.getMyCouple);
 router.delete('/me', coupleController.leaveCouple); 
+router.get('/me/pending', coupleController.getMyPendingCouple);
 router.put('/:coupleId/accept', coupleController.acceptInvite);
 router.put('/:coupleId/decline', coupleController.declineInvite);
 router.delete('/:coupleId', coupleController.cancelInvite); 
-
-
-
 
 export default router;

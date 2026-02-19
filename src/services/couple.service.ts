@@ -165,4 +165,9 @@ export const coupleService = {
 
     await Promise.all(updates);
   },
+  getMyPendingCouple: async (userId: string) => {
+    const couple = await coupleRepository.findPendingByUserId(userId);
+    if (!couple) throw new NotFoundError("No pending couple found");
+    return couple;
+  },
 };
