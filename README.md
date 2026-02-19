@@ -104,6 +104,7 @@ couple-challenge-api/
 | POST | `/api/couples` | Criar casal (enviar convite) | ✅ |
 | GET | `/api/couples/invites` | Listar convites recebidos | ✅ |
 | GET | `/api/couples/me` | Ver dados do casal | ✅ |
+| GET | `/api/couples/me/pending` | Ver convite pendente enviado | ✅ |
 | PUT | `/api/couples/:id/accept` | Aceitar convite | ✅ |
 | PUT | `/api/couples/:id/decline` | Recusar convite | ✅ |
 | DELETE | `/api/couples/:id` | Cancelar convite | ✅ |
@@ -116,6 +117,7 @@ couple-challenge-api/
 | POST | `/api/challenges` | Criar desafio | ✅ |
 | GET | `/api/challenges` | Listar desafios | ✅ |
 | GET | `/api/challenges/active` | Ver desafio ativo | ✅ |
+| GET | `/api/challenges/:id/score` | Ver pontuação atual do desafio | ✅ |
 | PUT | `/api/challenges/:id/finish` | Finalizar desafio | ✅ |
 
 ### Tasks
