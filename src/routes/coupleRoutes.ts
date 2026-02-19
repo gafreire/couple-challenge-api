@@ -10,11 +10,11 @@ router.use(authMiddleware);
 router.post('/', coupleController.createCouple);
 router.get('/invites', coupleController.listPendingInvites);
 router.get('/all', coupleController.listAllCouples);
+router.get('/me/pending', coupleController.getMyPendingCouple); 
 router.get('/me', coupleController.getMyCouple);
-router.delete('/me', coupleController.leaveCouple); 
-router.get('/me/pending', coupleController.getMyPendingCouple);
+router.delete('/me', coupleController.leaveCouple);
 router.put('/:coupleId/accept', coupleController.acceptInvite);
 router.put('/:coupleId/decline', coupleController.declineInvite);
-router.delete('/:coupleId', coupleController.cancelInvite); 
+router.delete('/:coupleId', coupleController.cancelInvite);
 
 export default router;
