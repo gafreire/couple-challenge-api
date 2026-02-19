@@ -11,6 +11,7 @@ router.post('/', challengeController.createChallenge);
 router.get('/active', challengeController.getActiveChallenge);
 router.get('/', challengeController.listChallenges);
 router.get('/:challengeId/tasks', challengeController.listTasks);
+router.get('/:challengeId/score', challengeController.getChallengeScore);
 router.put('/:challengeId/finish', challengeController.finishChallenge);
 
 export default router;
