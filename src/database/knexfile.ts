@@ -1,6 +1,8 @@
 import type { Knex } from 'knex';
 import { config as appConfig } from '../config/env';
 
+const isProd = process.env.NODE_ENV === 'production';
+
 const knexConfig: Knex.Config = {
   client: 'pg',
   connection: {
@@ -11,8 +13,8 @@ const knexConfig: Knex.Config = {
     password: appConfig.database.password,
   },
   migrations: {
-    directory: './migrations',
-    extension: 'ts',
+    directory: isProd ? './dist/database/migrations' : './migrations',
+    extension: isProd ? 'js' : 'ts',
   },
 };
 
