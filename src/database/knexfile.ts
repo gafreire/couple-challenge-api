@@ -1,5 +1,6 @@
 import type { Knex } from 'knex';
 import { config as appConfig } from '../config/env';
+import path from 'path';
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -13,7 +14,9 @@ const knexConfig: Knex.Config = {
     password: appConfig.database.password,
   },
   migrations: {
-    directory: isProd ? './dist/database/migrations' : './migrations',
+    directory: isProd 
+      ? path.join(__dirname, 'migrations')
+      : path.join(__dirname, '../../migrations'),
     extension: isProd ? 'js' : 'ts',
   },
 };
