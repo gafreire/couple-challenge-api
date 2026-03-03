@@ -1,5 +1,5 @@
-import db from '../database/connection';
-import { Challenge } from '../models/Challenge';
+import db from "../database/connection";
+import { Challenge } from "../models/Challenge";
 
 export const challengeRepository = {
   async create(data: {
@@ -7,56 +7,70 @@ export const challengeRepository = {
     name: string;
     start_date: Date;
     end_date: Date;
-    period_type: 'mensal' | 'trimestral' | 'semestral' | 'anual';
+    period_type: "mensal" | "trimestral" | "semestral" | "anual";
   }): Promise<Challenge> {
-    const result = await db.raw(`
+    const result = await db.raw(
+      `
       INSERT INTO challenges (couple_id, name, start_date, end_date, period_type, status)
       VALUES (?, ?, ?, ?, ?, 'active')
       RETURNING *
-    `, [
-      data.couple_id,
-      data.name,
-      data.start_date,
-      data.end_date,
-      data.period_type
-    ]);
+    `,
+      [
+        data.couple_id,
+        data.name,
+        data.start_date,
+        data.end_date,
+        data.period_type,
+      ],
+    );
 
     return result.rows[0];
   },
   async findById(id: string): Promise<Challenge | null> {
-    const result = await db.raw(`
+    const result = await db.raw(
+      `
       SELECT * FROM challenges WHERE id = ?
-    `, [id]);
+    `,
+      [id],
+    );
 
     return result.rows[0] || null;
   },
   async findByCoupleId(coupleId: string): Promise<Challenge[]> {
-    const result = await db.raw(`
+    const result = await db.raw(
+      `
       SELECT * FROM challenges
       WHERE couple_id = ?
       ORDER BY start_date DESC
-    `, [coupleId]);
+    `,
+      [coupleId],
+    );
 
     return result.rows;
   },
   async findActiveByCouple(coupleId: string): Promise<Challenge | null> {
-    const result = await db.raw(`
-      SELECT * FROM challenges
-      WHERE couple_id = ?
-      AND status = 'active'
-      AND NOW() BETWEEN start_date AND end_date
-      LIMIT 1
-    `, [coupleId]);
+    const result = await db.raw(
+      `
+    SELECT * FROM challenges
+    WHERE couple_id = ?
+    AND status = 'active'
+    LIMIT 1
+  `,
+      [coupleId],
+    );
 
     return result.rows[0] || null;
   },
   async findCompletedByCouple(coupleId: string): Promise<Challenge[]> {
-    const result = await db.raw(`
+    const result = await db.raw(
+      `
       SELECT * FROM challenges
       WHERE couple_id = ?
       AND status = 'completed'
       ORDER BY end_date DESC
-    `, [coupleId]);
+    `,
+      [coupleId],
+    );
 
     return result.rows;
   },
@@ -66,39 +80,39 @@ export const challengeRepository = {
       name?: string;
       start_date?: Date;
       end_date?: Date;
-      period_type?: 'mensal' | 'trimestral' | 'semestral' | 'anual';
-      status?: 'active' | 'completed' | 'cancelled';
-    }
+      period_type?: "mensal" | "trimestral" | "semestral" | "anual";
+      status?: "active" | "completed" | "cancelled";
+    },
   ): Promise<Challenge | null> {
     const fields: string[] = [];
     const values: any[] = [];
 
     if (data.name !== undefined) {
-      fields.push('name = ?');
+      fields.push("name = ?");
       values.push(data.name);
     }
 
     if (data.start_date !== undefined) {
-      fields.push('start_date = ?');
+      fields.push("start_date = ?");
       values.push(data.start_date);
     }
 
     if (data.end_date !== undefined) {
-      fields.push('end_date = ?');
+      fields.push("end_date = ?");
       values.push(data.end_date);
     }
 
     if (data.period_type !== undefined) {
-      fields.push('period_type = ?');
+      fields.push("period_type = ?");
       values.push(data.period_type);
     }
 
     if (data.status !== undefined) {
-      fields.push('status = ?');
+      fields.push("status = ?");
       values.push(data.status);
     }
 
-    fields.push('updated_at = NOW()');
+    fields.push("updated_at = NOW()");
 
     // Se não há campos para atualizar, retorna o registro atual
     if (fields.length === 1) {
@@ -107,12 +121,15 @@ export const challengeRepository = {
 
     values.push(id);
 
-    const result = await db.raw(`
+    const result = await db.raw(
+      `
       UPDATE challenges
-      SET ${fields.join(', ')}
+      SET ${fields.join(", ")}
       WHERE id = ?
       RETURNING *
-    `, values);
+    `,
+      values,
+    );
 
     return result.rows[0] || null;
   },
@@ -120,9 +137,10 @@ export const challengeRepository = {
     id: string,
     winnerId: string | null,
     winnerScore: number,
-    loserScore: number
+    loserScore: number,
   ): Promise<Challenge | null> {
-    const result = await db.raw(`
+    const result = await db.raw(
+      `
       UPDATE challenges
       SET status = 'completed',
           winner_id = ?,
@@ -131,28 +149,36 @@ export const challengeRepository = {
           updated_at = NOW()
       WHERE id = ?
       RETURNING *
-    `, [winnerId, winnerScore, loserScore, id]);
+    `,
+      [winnerId, winnerScore, loserScore, id],
+    );
 
     return result.rows[0] || null;
   },
   async cancel(id: string): Promise<Challenge | null> {
-    const result = await db.raw(`
+    const result = await db.raw(
+      `
       UPDATE challenges
       SET status = 'cancelled',
           updated_at = NOW()
       WHERE id = ?
       RETURNING *
-    `, [id]);
+    `,
+      [id],
+    );
 
     return result.rows[0] || null;
   },
   async coupleHasActiveChallenge(coupleId: string): Promise<boolean> {
-    const result = await db.raw(`
+    const result = await db.raw(
+      `
       SELECT 1 FROM challenges
       WHERE couple_id = ?
       AND status = 'active'
       LIMIT 1
-    `, [coupleId]);
+    `,
+      [coupleId],
+    );
 
     return result.rows.length > 0;
   },
@@ -160,7 +186,8 @@ export const challengeRepository = {
     challenge: Challenge;
     winner: { id: string; name: string; profile_picture: string | null } | null;
   } | null> {
-    const result = await db.raw(`
+    const result = await db.raw(
+      `
       SELECT 
         c.*,
         CASE 
@@ -175,7 +202,9 @@ export const challengeRepository = {
       FROM challenges c
       LEFT JOIN users u ON c.winner_id = u.id
       WHERE c.id = ?
-    `, [challengeId]);
+    `,
+      [challengeId],
+    );
 
     if (!result.rows[0]) {
       return null;
@@ -202,11 +231,14 @@ export const challengeRepository = {
     };
   },
   async delete(id: string): Promise<boolean> {
-    const result = await db.raw(`
+    const result = await db.raw(
+      `
       DELETE FROM challenges WHERE id = ?
       RETURNING id
-    `, [id]);
+    `,
+      [id],
+    );
 
     return result.rows.length > 0;
-  }
+  },
 };
