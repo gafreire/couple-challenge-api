@@ -10,10 +10,11 @@ export const taskRepository = {
     description?: string | null;
     points: number;
     max_completions?: number | null;
+    assignee?: 'user_1' | 'user_2' | 'both';
   }): Promise<Task> {
     const result = await db.raw(`
-      INSERT INTO tasks (challenge_id, user_id, name, description, points, max_completions)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO tasks (challenge_id, user_id, name, description, points, max_completions, assignee)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
       RETURNING *
     `, [
       data.challenge_id,
@@ -21,7 +22,8 @@ export const taskRepository = {
       data.name,
       data.description || null,
       data.points,
-      data.max_completions || null
+      data.max_completions || null,
+      data.assignee || 'both',
     ]);
 
     return result.rows[0];
@@ -67,6 +69,7 @@ export const taskRepository = {
       description?: string | null;
       points?: number;
       max_completions?: number | null;
+      assignee?: 'user_1' | 'user_2' | 'both';
     }
   ): Promise<Task | null> {
     const fields: string[] = [];
@@ -92,9 +95,13 @@ export const taskRepository = {
       values.push(data.max_completions);
     }
 
+    if (data.assignee !== undefined) {
+      fields.push('assignee = ?');
+      values.push(data.assignee);
+    }
+
     fields.push('updated_at = NOW()');
 
-    // Se não há campos para atualizar, retorna o registro atual
     if (fields.length === 1) {
       return this.findById(id);
     }
@@ -136,6 +143,7 @@ export const taskRepository = {
         description: row.description,
         points: row.points,
         max_completions: row.max_completions,
+        assignee: row.assignee,
         created_at: row.created_at,
         updated_at: row.updated_at,
       },
@@ -163,6 +171,7 @@ export const taskRepository = {
         description: row.description,
         points: row.points,
         max_completions: row.max_completions,
+        assignee: row.assignee,
         created_at: row.created_at,
         updated_at: row.updated_at,
       },

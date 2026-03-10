@@ -8,14 +8,14 @@ export const taskController = {
     try {
       if (!req.user) throw new UnauthorizedError("User not authenticated");
 
-      const { challenge_id, name, description, points, max_completions } =
-        req.body;
+      const { challenge_id, name, description, points, max_completions, assignee } = req.body;
       const task = await taskService.createTask(req.user.userId, {
         challenge_id,
         name,
         description,
         points,
         max_completions,
+        assignee,
       });
       res.status(201).json(task);
     } catch (error) {
@@ -26,7 +26,7 @@ export const taskController = {
     try {
       if (!req.user) throw new UnauthorizedError("User not authenticated");
       const { taskId } = req.params;
-      const { name, description, points, max_completions } = req.body;
+      const { name, description, points, max_completions, assignee } = req.body;
       const updatedTask = await taskService.updateTask(
         req.user.userId,
         taskId as string,
@@ -35,6 +35,7 @@ export const taskController = {
           description,
           points,
           max_completions,
+          assignee,
         },
       );
       res.status(200).json(updatedTask);
@@ -47,7 +48,7 @@ export const taskController = {
       if (!req.user) throw new UnauthorizedError("User not authenticated");
       const { taskId } = req.params;
       await taskService.deleteTask(req.user.userId, taskId as string);
-      res.status(204).send()
+      res.status(204).send();
     } catch (error) {
       next(error);
     }

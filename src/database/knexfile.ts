@@ -16,7 +16,7 @@ const knexConfig: Knex.Config = {
   migrations: {
     directory: isProd 
       ? path.join(__dirname, 'migrations')
-      : path.join(__dirname, '../../migrations'),
+      : path.join(__dirname, 'migrations'),
     extension: isProd ? 'js' : 'ts',
   },
 };

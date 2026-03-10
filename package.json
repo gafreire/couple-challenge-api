@@ -6,8 +6,10 @@
   "scripts": {
     "dev": "nodemon --exec ts-node src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
-    "migrate": "knex --knexfile dist/database/knexfile.js migrate:latest"
+    "start": "npm run migrate:prod && node dist/index.js",
+    "migrate": "knex --knexfile dist/database/knexfile.js migrate:latest",
+    "migrate:dev": "ts-node ./node_modules/knex/bin/cli.js --knexfile src/database/knexfile.ts migrate:latest",
+    "migrate:prod": "node node_modules/.bin/knex migrate:latest --knexfile dist/database/knexfile.js"
   },
   "repository": {
     "type": "git",

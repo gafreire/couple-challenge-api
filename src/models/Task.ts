@@ -6,6 +6,7 @@ export interface Task {
     description: string | null;
     points: number;
     max_completions: number | null;
+    assignee: 'user_1' | 'user_2' | 'both';
     created_at: Date;
     updated_at: Date;
 }

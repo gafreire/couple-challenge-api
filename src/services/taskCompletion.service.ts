@@ -28,8 +28,13 @@ export const taskCompletionService = {
         "Only tasks from active challenges can be completed",
       );
 
-    if (task.user_id !== userId)
-      throw new BadRequestError("You can only complete your own tasks");
+    // Validação de assignee
+    if (task.assignee === 'user_1' && userId !== couple.user_id_1)
+      throw new BadRequestError("Only user 1 can complete this task");
+    if (task.assignee === 'user_2' && userId !== couple.user_id_2)
+      throw new BadRequestError("Only user 2 can complete this task");
+    if (task.assignee === 'both' && userId !== couple.user_id_1 && userId !== couple.user_id_2)
+      throw new BadRequestError("You are not part of this couple");
 
     if (task.max_completions !== null) {
       const completedTasks =
